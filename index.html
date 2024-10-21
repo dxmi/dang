@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dang!</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div id="wrapper">
+            <h1> / </h1>
+            <ul id="files" class="view-tiles">
+                <li><a href="./public"><span class="name">public</span></a></li>
+                <li><a href="./uploads"><span class="name">uploads</span></a></li>
+            </ul>
+        </div>
+        <div>
+            <textarea id="txt" cols="80" rows="20"></textarea>
+        </div>
+        <div>
+            <input type="button" id="btn-send" value="Send"/>
+        </div>
+        <div>
+            <input type="file" id="input-file"/>
+            <input type="button" id="btn-upload" value="Upload"/>
+        </div>
+        <script>
+            const eTextArea = document.getElementById("txt");
+            const eFile = document.getElementById("input-file");
+            const eSend = document.getElementById("btn-send");
+            const eUpload = document.getElementById("btn-upload");
+            const sendIt = async (payload, name) => {
+                const uri = "./uploads" + (name ? ("/" + name) : "");
+                const response = await fetch(uri, {
+                    method: "POST",
+                    body: payload,
+                    headers: {
+                        "Content-Type": ((typeof payload === 'string')? 'text/plain': "application/octet-stream"),
+                    },
+                });
+            }
+            eUpload.addEventListener("click", async (e) => {
+                console.log("file");
+                console.log(eFile.value)
+                if(eFile.files.length){
+                    await sendIt(eFile.files[0], eFile.files[0].name);
+                    eFile.value = '';
+                }
+                console.log('===');
+            })
+            eSend.addEventListener("click", async (e) => {
+                console.log("text");
+                console.log(eTextArea.value);
+                if(eTextArea.value.trim()){
+                    const data = eTextArea.value;
+                    await sendIt(data);
+                    eTextArea.value = '';
+                }
+                console.log('===');
+            })
+        </script>
+    </body>
+</html>
